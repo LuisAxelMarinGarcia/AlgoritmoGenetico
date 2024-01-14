@@ -152,25 +152,53 @@ ventana.title("Algoritmo Genético")
 frame_entradas = ttk.Frame(ventana)
 frame_entradas.grid(column=0, row=0, sticky='ew')
 
-ttk.Label(frame_entradas, text="Tamaño de la Población:").grid(column=0, row=0)
-tamanio_poblacion = ttk.Entry(frame_entradas)
-tamanio_poblacion.grid(column=1, row=0)
+# Campos de entrada
+ttk.Label(frame_entradas, text="Ingrese la fórmula:").grid(column=0, row=0)
+entrada_formula = ttk.Entry(frame_entradas)
+entrada_formula.grid(column=1, row=0)
 
-ttk.Label(frame_entradas, text="Probabilidad de Mutación:").grid(column=0, row=1)
-prob_mutacion = ttk.Entry(frame_entradas)
-prob_mutacion.grid(column=1, row=1)
+ttk.Label(frame_entradas, text="Ingrese la resolución deseable:").grid(column=0, row=1)
+resolucion_deseable = ttk.Entry(frame_entradas)
+resolucion_deseable.grid(column=1, row=1)
 
-ttk.Label(frame_entradas, text="Número de Generaciones:").grid(column=0, row=2)
-num_generaciones = ttk.Entry(frame_entradas)
-num_generaciones.grid(column=1, row=2)
+ttk.Label(frame_entradas, text="Ingrese la probabilidad de mutación del gen:").grid(column=0, row=2)
+prob_mutacion_gen = ttk.Entry(frame_entradas)
+prob_mutacion_gen.grid(column=1, row=2)
 
-ttk.Label(frame_entradas, text="Longitud de los Individuos:").grid(column=0, row=3)
-longitud_individuos = ttk.Entry(frame_entradas)
-longitud_individuos.grid(column=1, row=3)
+ttk.Label(frame_entradas, text="Ingrese la población inicial:").grid(column=0, row=3)
+poblacion_inicial = ttk.Entry(frame_entradas)
+poblacion_inicial.grid(column=1, row=3)
+
+ttk.Label(frame_entradas, text="Ingrese la probabilidad de cruza:").grid(column=0, row=4)
+prob_cruza = ttk.Entry(frame_entradas)
+prob_cruza.grid(column=1, row=4)
+
+ttk.Label(frame_entradas, text="Ingrese la población máxima:").grid(column=0, row=5)
+poblacion_maxima = ttk.Entry(frame_entradas)
+poblacion_maxima.grid(column=1, row=5)
+
+# Campo de entrada para el intervalo
+ttk.Label(frame_entradas, text="Ingrese el intervalo:").grid(column=0, row=6)
+frame_intervalo = ttk.Frame(frame_entradas)
+frame_intervalo.grid(column=1, row=6, sticky='ew')
+
+intervalo_min = ttk.Entry(frame_intervalo, width=10)
+intervalo_min.pack(side=tk.LEFT)
+ttk.Label(frame_intervalo, text=" - ").pack(side=tk.LEFT)
+intervalo_max = ttk.Entry(frame_intervalo, width=10)
+intervalo_max.pack(side=tk.LEFT)
+
+ttk.Label(frame_entradas, text="Ingrese la probabilidad de mutación del individuo:").grid(column=0, row=7)
+prob_mutacion_individuo = ttk.Entry(frame_entradas)
+prob_mutacion_individuo.grid(column=1, row=7)
+
+ttk.Label(frame_entradas, text="Ingrese el número de iteraciones:").grid(column=0, row=8)
+num_iteraciones = ttk.Entry(frame_entradas)
+num_iteraciones.grid(column=1, row=8)
 
 # Botón para iniciar el algoritmo
-ttk.Button(ventana, text="Iniciar Algoritmo", command=iniciar_algoritmo).grid(column=0, row=1, columnspan=2)
+ttk.Button(ventana, text="Iniciar Algoritmo", command=iniciar_algoritmo).grid(column=0, row=9, columnspan=2)
 
-# Espacio reservado para futuras visualizaciones de resultados (estadísticas, gráficas, etc.)
+ventana.mainloop()
 
 ventana.mainloop()
