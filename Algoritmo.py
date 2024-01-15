@@ -4,7 +4,7 @@ import random
 import itertools
 import math
 import matplotlib.pyplot as plt
-import pandas as pd
+
 
 def cruzar_en_punto_fijo(individuo1, individuo2, punto_cruza):
     nuevo_individuo1 = individuo1[:punto_cruza] + individuo2[punto_cruza:]
@@ -85,7 +85,7 @@ def iniciar_proceso(modo):
         intervalo_inferior = float(entradas["Intervalo Inferior"].get())
         intervalo_superior = float(entradas["Intervalo Superior"].get())
         num_iteraciones = int(entradas["Ingrese el número de iteraciones"].get())
-        prob_cruza = float(entradas["Ingrese la probabilidad de cruza"].get())  # Nueva línea para la probabilidad de cruza
+        prob_cruza = float(entradas["Ingrese la probabilidad de cruza"].get()) 
     except ValueError:
         print("Por favor, ingresa valores válidos en todos los campos.")
         return
@@ -192,9 +192,15 @@ def podar_poblacion(poblacion_con_fitness, tamano_maximo):
 
 
 
+# Estilos
+COLOR_FONDO = "#f0f0f0"
+COLOR_BOTON = "#d9d9d9"
+FUENTE = ("Arial", 10)
+
 # Crear la ventana principal
 ventana = tk.Tk()
 ventana.title("Algoritmo Genético")
+ventana.configure(bg=COLOR_FONDO)
 
 # Crear y colocar etiquetas y campos de entrada
 etiquetas = ["Ingrese la resolución deseable", "Ingrese la probabilidad de mutación del gen",
@@ -203,36 +209,47 @@ etiquetas = ["Ingrese la resolución deseable", "Ingrese la probabilidad de muta
 
 # Fórmula fija
 etiqueta_formula = "Fórmula: ((3x) ⋅ sen(x)) / 100 + (2x) ⋅ cos(x)"
-tk.Label(ventana, text=etiqueta_formula, wraplength=300).grid(row=0, column=0, columnspan=3)
+tk.Label(ventana, text=etiqueta_formula, wraplength=300, bg=COLOR_FONDO, font=FUENTE).grid(row=0, column=0, columnspan=3)
 
 entradas = {}
 
-# Crear campos de entrada para las etiquetas restantes
+# Crear Frame para entradas
+frame_entradas = tk.Frame(ventana, bg=COLOR_FONDO)
+frame_entradas.grid(row=1, column=0, columnspan=3, sticky="ew")
+
+# Crear campos de entrada para las etiquetas
 for i, etiqueta in enumerate(etiquetas):
-    tk.Label(ventana, text=etiqueta).grid(row=i + 1, column=0)  # Ajuste en el índice de la fila
-    entrada = tk.Entry(ventana)
-    entrada.grid(row=i + 1, column=1, columnspan=2)  # Ajuste en el índice de la fila
+    tk.Label(frame_entradas, text=etiqueta, bg=COLOR_FONDO, font=FUENTE).grid(row=i, column=0, sticky="w")
+    entrada = tk.Entry(frame_entradas, font=FUENTE)
+    entrada.grid(row=i, column=1, columnspan=2, sticky="ew")
     entradas[etiqueta] = entrada
 
 # Intervalo
-row_intervalo = len(etiquetas) + 1  # Ajuste en el índice de la fila para el intervalo
-tk.Label(ventana, text="Ingrese el intervalo").grid(row=row_intervalo, column=0)
-intervalo_inferior = tk.Entry(ventana)
-intervalo_inferior.grid(row=row_intervalo, column=1)
+frame_intervalo = tk.Frame(ventana, bg=COLOR_FONDO)
+frame_intervalo.grid(row=2, column=0, columnspan=3, sticky="ew")
+
+tk.Label(frame_intervalo, text="Intervalo Inferior", bg=COLOR_FONDO, font=FUENTE).grid(row=0, column=0)
+intervalo_inferior = tk.Entry(frame_intervalo, font=FUENTE)
+intervalo_inferior.grid(row=0, column=1)
 entradas["Intervalo Inferior"] = intervalo_inferior
 
-intervalo_superior = tk.Entry(ventana)
-intervalo_superior.grid(row=row_intervalo, column=2)
+tk.Label(frame_intervalo, text="Intervalo Superior", bg=COLOR_FONDO, font=FUENTE).grid(row=0, column=2)
+intervalo_superior = tk.Entry(frame_intervalo, font=FUENTE)
+intervalo_superior.grid(row=0, column=3)
 entradas["Intervalo Superior"] = intervalo_superior
 
-# Botón de Maximizar
-tk.Button(ventana, text="Maximizar", command=lambda: iniciar_proceso("maximizar")).grid(row=len(etiquetas) + 1, column=0)
+# Botones
+frame_botones = tk.Frame(ventana, bg=COLOR_FONDO)
+frame_botones.grid(row=3, column=0, columnspan=3, sticky="ew")
 
-# Botón de Minimizar
-tk.Button(ventana, text="Minimizar", command=lambda: iniciar_proceso("minimizar")).grid(row=len(etiquetas) + 1, column=1)
+tk.Button(frame_botones, text="Maximizar", bg=COLOR_BOTON, font=FUENTE, command=lambda: iniciar_proceso("maximizar")).grid(row=0, column=0)
+tk.Button(frame_botones, text="Minimizar", bg=COLOR_BOTON, font=FUENTE, command=lambda: iniciar_proceso("minimizar")).grid(row=0, column=1)
+tk.Button(frame_botones, text="Salir", bg=COLOR_BOTON, font=FUENTE, command=ventana.quit).grid(row=0, column=2)
 
-# Botón de Salir
-tk.Button(ventana, text="Salir", command=ventana.quit).grid(row=len(etiquetas) + 2, column=0)
+# Configuración de columnas para que se expandan adecuadamente
+frame_entradas.columnconfigure(1, weight=1)
+frame_intervalo.columnconfigure([1, 3], weight=1)
+frame_botones.columnconfigure([0, 1, 2], weight=1)
 
 # Iniciar el loop de la interfaz
 ventana.mainloop()
