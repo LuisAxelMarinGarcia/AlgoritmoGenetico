@@ -1,8 +1,10 @@
 import tkinter as tk
+from tkinter import ttk
 import random
 import itertools
 import math
 import matplotlib.pyplot as plt
+import pandas as pd
 
 def cruzar_en_punto_fijo(individuo1, individuo2, punto_cruza):
     nuevo_individuo1 = individuo1[:punto_cruza] + individuo2[punto_cruza:]
@@ -53,7 +55,24 @@ def podar_poblacion(poblacion_con_fitness, tamano_maximo):
     return [individuo for individuo, _ in poblacion_con_fitness]
 
 
-import matplotlib.pyplot as plt
+def mostrar_resultados(poblacion_con_fitness, intervalo_inferior, intervalo_superior):
+    # Crear una nueva ventana
+    ventana_resultados = tk.Toplevel()
+    ventana_resultados.title("Resultados de la Última Generación")
+
+    # Crear un Treeview
+    tree = ttk.Treeview(ventana_resultados, columns=('Cromosoma', 'Fenotipo', 'Fitness'), show='headings')
+    tree.heading('Cromosoma', text='Cromosoma')
+    tree.heading('Fenotipo', text='Fenotipo')
+    tree.heading('Fitness', text='Fitness')
+    tree.grid(row=0, column=0, sticky='nsew')
+
+    # Agregar datos a la tabla
+    for individuo, fitness in poblacion_con_fitness:
+        fenotipo = binario_a_decimal(individuo, intervalo_inferior, intervalo_superior)
+        tree.insert('', tk.END, values=(str(individuo), f"{fenotipo:.2f}", f"{fitness:.2f}"))
+
+
 
 def iniciar_proceso(modo):
     try:
@@ -139,6 +158,10 @@ def iniciar_proceso(modo):
     plt.title('Distribución del Fitness en la Última Generación')
     plt.tight_layout()
     plt.show()
+    
+    mostrar_resultados(poblacion_con_fitness, intervalo_inferior, intervalo_superior)
+
+
 
 # Aquí continúa tu código de Tkinter para la interfaz
 
