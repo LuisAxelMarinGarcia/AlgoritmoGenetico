@@ -72,6 +72,7 @@ def iniciar_proceso(modo):
 
     fitness_medio_por_generacion = []
     mejor_fitness_por_generacion = []
+    peor_fitness_por_generacion = []
 
     # Inicializar la población
     poblacion = [[random.randint(0, 1) for _ in range(num_bits)] for _ in range(tamano_poblacion)]
@@ -91,9 +92,10 @@ def iniciar_proceso(modo):
 
         # Evaluación de fitness y poda
         poblacion_con_fitness = [(ind, evaluar_fitness(ind, intervalo_inferior, intervalo_superior)) for ind in nueva_poblacion]
-
+        
         # Ajuste para maximizar o minimizar
-        if modo == "minimizar":
+        invertir_fitness = modo == "minimizar"
+        if invertir_fitness:
             poblacion_con_fitness = [(ind, -fitness) for ind, fitness in poblacion_con_fitness]
 
         poblacion = podar_poblacion(poblacion_con_fitness, tamano_maximo)
@@ -101,15 +103,25 @@ def iniciar_proceso(modo):
         # Calcular estadísticas
         fitness_total = sum(fitness for _, fitness in poblacion_con_fitness)
         mejor_fitness = max(fitness for _, fitness in poblacion_con_fitness)
+        peor_fitness = min(fitness for _, fitness in poblacion_con_fitness)
         fitness_medio = fitness_total / len(poblacion_con_fitness)
+
+        # Ajuste en el gráfico para reflejar correctamente la minimización
+        if invertir_fitness:
+            mejor_fitness = -mejor_fitness
+            peor_fitness = -peor_fitness
+            fitness_medio = -fitness_medio
+
         fitness_medio_por_generacion.append(fitness_medio)
         mejor_fitness_por_generacion.append(mejor_fitness)
+        peor_fitness_por_generacion.append(peor_fitness)
 
     # Mostrar gráficos
     plt.figure(figsize=(12, 6))
     plt.subplot(1, 2, 1)
-    plt.plot(fitness_medio_por_generacion, label='Fitness Medio')
-    plt.plot(mejor_fitness_por_generacion, label='Mejor Fitness')
+    plt.plot(fitness_medio_por_generacion, label='Caso Promedio', color='green')
+    plt.plot(mejor_fitness_por_generacion, label='Mejor Caso', color='blue')
+    plt.plot(peor_fitness_por_generacion, label='Peor Caso', color='orange')
     plt.xlabel('Generación')
     plt.ylabel('Fitness')
     plt.title('Evolución del Fitness')
