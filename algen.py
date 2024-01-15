@@ -66,6 +66,7 @@ def iniciar_proceso(modo):
         intervalo_inferior = float(entradas["Intervalo Inferior"].get())
         intervalo_superior = float(entradas["Intervalo Superior"].get())
         num_iteraciones = int(entradas["Ingrese el número de iteraciones"].get())
+        prob_cruza = float(entradas["Ingrese la probabilidad de cruza"].get())  # Nueva línea para la probabilidad de cruza
     except ValueError:
         print("Por favor, ingresa valores válidos en todos los campos.")
         return
@@ -83,9 +84,13 @@ def iniciar_proceso(modo):
 
         # Cruzamiento
         for ind1, ind2 in parejas:
-            punto_cruza = random.randint(1, len(ind1) - 1)
-            descendiente1, descendiente2 = cruzar_en_punto_fijo(ind1, ind2, punto_cruza)
-            nueva_poblacion.extend([descendiente1, descendiente2])
+            if random.random() < prob_cruza:  # Aplicar la probabilidad de cruza
+                punto_cruza = random.randint(1, len(ind1) - 1)
+                descendiente1, descendiente2 = cruzar_en_punto_fijo(ind1, ind2, punto_cruza)
+                nueva_poblacion.extend([descendiente1, descendiente2])
+            else:
+                # Si no se realiza el cruzamiento, pasar los individuos sin cambios
+                nueva_poblacion.extend([ind1, ind2])
 
         # Mutación
         nueva_poblacion = [mutar_individuo(ind, prob_mutacion_gen) if random.random() < prob_mutacion_individuo else ind for ind in nueva_poblacion]
