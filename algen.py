@@ -3,6 +3,8 @@ import random
 import itertools
 import math
 import matplotlib.pyplot as plt
+import sympy as sp
+
 
 def cruzar_en_punto_fijo(individuo1, individuo2, punto_cruza):
     nuevo_individuo1 = individuo1[:punto_cruza] + individuo2[punto_cruza:]
@@ -32,10 +34,22 @@ def binario_a_decimal(binario, intervalo_inferior, intervalo_superior):
     max_decimal = 2 ** len(binario) - 1
     return intervalo_inferior + (decimal / max_decimal) * (intervalo_superior - intervalo_inferior)
 
-def evaluar_fitness(individuo, intervalo_inferior, intervalo_superior):
-    """Evalúa el fitness de un individuo usando la función dada."""
+def evaluar_fitness(individuo, intervalo_inferior, intervalo_superior, formula_str):
     x = binario_a_decimal(individuo, intervalo_inferior, intervalo_superior)
-    return ((x * 3) * math.sin(x)) / 100 + (x * 2) * math.cos(x)
+    x_simbolico = sp.symbols('x')
+
+    try:
+        formula = sp.sympify(formula_str)
+        fitness = formula.subs(x_simbolico, x)
+        if isinstance(fitness, sp.Number):  # Verificar que el resultado es un número
+            return float(fitness)
+        else:
+            print("El resultado de la fórmula no es un número.")
+            return 0  # O manejar de otra forma
+    except (sp.SympifyError, TypeError):
+        print("Error al analizar la expresión.")
+        return 0  # O manejar de otra forma
+
 
 def podar_poblacion(poblacion_con_fitness, tamano_maximo):
     # Asegurarse de mantener al mejor individuo
@@ -66,7 +80,8 @@ def iniciar_proceso(modo):
         intervalo_inferior = float(entradas["Intervalo Inferior"].get())
         intervalo_superior = float(entradas["Intervalo Superior"].get())
         num_iteraciones = int(entradas["Ingrese el número de iteraciones"].get())
-        prob_cruza = float(entradas["Ingrese la probabilidad de cruza"].get())  # Nueva línea para la probabilidad de cruza
+        prob_cruza = float(entradas["Ingrese la probabilidad de cruza"].get())
+        formula_str = entradas["Ingrese la fórmula"].get()  # Obtener la fórmula ingresada por el usuario
     except ValueError:
         print("Por favor, ingresa valores válidos en todos los campos.")
         return
@@ -84,19 +99,18 @@ def iniciar_proceso(modo):
 
         # Cruzamiento
         for ind1, ind2 in parejas:
-            if random.random() < prob_cruza:  # Aplicar la probabilidad de cruza
+            if random.random() < prob_cruza:
                 punto_cruza = random.randint(1, len(ind1) - 1)
                 descendiente1, descendiente2 = cruzar_en_punto_fijo(ind1, ind2, punto_cruza)
                 nueva_poblacion.extend([descendiente1, descendiente2])
             else:
-                # Si no se realiza el cruzamiento, pasar los individuos sin cambios
                 nueva_poblacion.extend([ind1, ind2])
 
         # Mutación
         nueva_poblacion = [mutar_individuo(ind, prob_mutacion_gen) if random.random() < prob_mutacion_individuo else ind for ind in nueva_poblacion]
 
         # Evaluación de fitness y poda
-        poblacion_con_fitness = [(ind, evaluar_fitness(ind, intervalo_inferior, intervalo_superior)) for ind in nueva_poblacion]
+        poblacion_con_fitness = [(ind, evaluar_fitness(ind, intervalo_inferior, intervalo_superior, formula_str)) for ind in nueva_poblacion]
         
         # Ajuste para maximizar o minimizar
         invertir_fitness = modo == "minimizar"
@@ -120,6 +134,9 @@ def iniciar_proceso(modo):
         fitness_medio_por_generacion.append(fitness_medio)
         mejor_fitness_por_generacion.append(mejor_fitness)
         peor_fitness_por_generacion.append(peor_fitness)
+        
+
+
 
     # Mostrar gráficos
     plt.figure(figsize=(12, 6))
