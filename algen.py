@@ -55,7 +55,7 @@ def podar_poblacion(poblacion_con_fitness, tamano_maximo):
 
 import matplotlib.pyplot as plt
 
-def iniciar_proceso():
+def iniciar_proceso(modo):
     try:
         # Obtener y validar los parámetros de la interfaz
         tamano_poblacion = int(entradas["Ingrese la población inicial"].get())
@@ -91,6 +91,11 @@ def iniciar_proceso():
 
         # Evaluación de fitness y poda
         poblacion_con_fitness = [(ind, evaluar_fitness(ind, intervalo_inferior, intervalo_superior)) for ind in nueva_poblacion]
+
+        # Ajuste para maximizar o minimizar
+        if modo == "minimizar":
+            poblacion_con_fitness = [(ind, -fitness) for ind, fitness in poblacion_con_fitness]
+
         poblacion = podar_poblacion(poblacion_con_fitness, tamano_maximo)
 
         # Calcular estadísticas
@@ -99,6 +104,7 @@ def iniciar_proceso():
         fitness_medio = fitness_total / len(poblacion_con_fitness)
         fitness_medio_por_generacion.append(fitness_medio)
         mejor_fitness_por_generacion.append(mejor_fitness)
+
     # Mostrar gráficos
     plt.figure(figsize=(12, 6))
     plt.subplot(1, 2, 1)
@@ -173,9 +179,14 @@ intervalo_superior = tk.Entry(ventana)
 intervalo_superior.grid(row=len(etiquetas), column=2)
 entradas["Intervalo Superior"] = intervalo_superior
 
-# Botones
-tk.Button(ventana, text="Iniciar", command=iniciar_proceso).grid(row=len(etiquetas) + 1, column=0)
-tk.Button(ventana, text="Salir", command=ventana.quit).grid(row=len(etiquetas) + 1, column=1)
+# Botón de Maximizar
+tk.Button(ventana, text="Maximizar", command=lambda: iniciar_proceso("maximizar")).grid(row=len(etiquetas) + 1, column=0)
+
+# Botón de Minimizar
+tk.Button(ventana, text="Minimizar", command=lambda: iniciar_proceso("minimizar")).grid(row=len(etiquetas) + 1, column=1)
+
+# Botón de Salir
+tk.Button(ventana, text="Salir", command=ventana.quit).grid(row=len(etiquetas) + 2, column=0)
 
 # Iniciar el loop de la interfaz
 ventana.mainloop()
